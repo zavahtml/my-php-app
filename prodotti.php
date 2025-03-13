@@ -43,17 +43,28 @@ $result = $conn->query($sql);
 <body>
 <a href="index.html">🔙 Torna alla lista prodotti</a>
 <br>
+<br>
 <a href="rimuovi.php">
     <button style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
         Rimuovi un Prodotto
     </button>
 </a>
 <br>
+<br>
 <a href="rimuovi_range.php">
     <button style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
         Rimuovi più Prodotti
     </button>
 </a>
+
+<br>   
+<br>
+<a href="modifica.php">
+    <button style="background-color: #007BFF; color: white; padding: 10px; border: none; cursor: pointer;">
+        Modifica un Prodotto
+    </button>
+</a>
+
 
 <h2>Lista Prodotti</h2>
 
