@@ -47,6 +47,12 @@ $result = $conn->query($sql);
         Rimuovi un Prodotto
     </button>
 </a>
+<br>
+<a href="rimuovi_range.php">
+    <button style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+        Rimuovi più Prodotti
+    </button>
+</a>
 
 <h2>Lista Prodotti</h2>
 
