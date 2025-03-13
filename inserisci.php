@@ -48,6 +48,6 @@ $conn->close();
     </style>
 </head>
 <body>
-<a href="prodotti.php">🔙 Torna alla lista prodotti</a>
+<a href="index.html">🔙 Torna alla lista prodotti</a>
 </body>
 </html>
