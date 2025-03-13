@@ -2,34 +2,46 @@
 include 'connessione.php'; // Connessione al database Railway
 
 $messaggio = "";
+$prodotto = null;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST['id'];
-    $campo = $_POST['campo'];
-    $valore = $_POST['valore'];
-
-    if (!empty($id) && !empty($campo) && !empty($valore) && is_numeric($id)) {
+// Se viene inviato l'ID, carichiamo i dettagli del prodotto
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerca"])) {
+    $id = $_POST["id"];
+    if (!empty($id) && is_numeric($id)) {
         $id = $conn->real_escape_string($id);
-        $campo = $conn->real_escape_string($campo);
-        $valore = $conn->real_escape_string($valore);
+        $sql = "SELECT * FROM prodotti WHERE id = $id";
+        $result = $conn->query($sql);
 
-        // Controlliamo se il prodotto esiste
-        $check_sql = "SELECT * FROM prodotti WHERE id = $id";
-        $check_result = $conn->query($check_sql);
-
-        if ($check_result->num_rows > 0) {
-            // Modifica il campo scelto
-            $sql = "UPDATE prodotti SET $campo = '$valore' WHERE id = $id";
-            if ($conn->query($sql) === TRUE) {
-                $messaggio = "<p style='color:green;'>Prodotto modificato con successo!</p>";
-            } else {
-                $messaggio = "<p style='color:red;'>Errore durante la modifica: " . $conn->error . "</p>";
-            }
+        if ($result->num_rows > 0) {
+            $prodotto = $result->fetch_assoc();
         } else {
             $messaggio = "<p style='color:red;'>Errore: Nessun prodotto trovato con questo ID.</p>";
         }
+    }
+}
+
+// Se viene inviata una modifica
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modifica"])) {
+    $id = $_POST['id'];
+    $nome = $_POST['nome'];
+    $prezzo = $_POST['prezzo'];
+    $stato = $_POST['stato'];
+
+    if (!empty($id) && is_numeric($id)) {
+        $id = $conn->real_escape_string($id);
+        $nome = $conn->real_escape_string($nome);
+        $prezzo = $conn->real_escape_string($prezzo);
+        $stato = $conn->real_escape_string($stato);
+
+        $sql = "UPDATE prodotti SET nome = '$nome', prezzo = '$prezzo', stato = '$stato' WHERE id = $id";
+
+        if ($conn->query($sql) === TRUE) {
+            $messaggio = "<p style='color:green;'>Prodotto modificato con successo!</p>";
+        } else {
+            $messaggio = "<p style='color:red;'>Errore durante la modifica: " . $conn->error . "</p>";
+        }
     } else {
-        $messaggio = "<p style='color:red;'>Errore: Compila tutti i campi correttamente.</p>";
+        $messaggio = "<p style='color:red;'>Errore: Inserisci un ID valido.</p>";
     }
 }
 ?>
@@ -53,9 +65,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 5px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-        input, select {
+        input {
             padding: 8px;
             margin: 10px 0;
+            width: 100%;
         }
         button {
             background-color: #007BFF;
@@ -79,22 +92,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <h2>Modifica un Prodotto</h2>
 <?php echo $messaggio; ?>
+
+<!-- Form per cercare il prodotto -->
 <form method="POST">
-    <label for="id">ID Prodotto:</label><br>
+    <label for="id">Inserisci ID del prodotto da modificare:</label><br>
     <input type="number" name="id" required><br>
-
-    <label for="campo">Seleziona il campo da modificare:</label><br>
-    <select name="campo" required>
-        <option value="nome">Nome</option>
-        <option value="prezzo">Prezzo</option>
-        <option value="stato">Stato</option>
-    </select><br>
-
-    <label for="valore">Nuovo Valore:</label><br>
-    <input type="text" name="valore" required><br>
-
-    <button type="submit">Modifica Prodotto</button>
+    <button type="submit" name="cerca">Cerca Prodotto</button>
 </form>
+
+<?php if ($prodotto): ?>
+    <!-- Form per modificare il prodotto -->
+    <h3>Modifica Prodotto ID: <?php echo $prodotto["id"]; ?></h3>
+    <form method="POST">
+        <input type="hidden" name="id" value="<?php echo $prodotto["id"]; ?>">
+        
+        <label for="nome">Nome:</label><br>
+        <input type="text" name="nome" value="<?php echo $prodotto["nome"]; ?>" required><br>
+
+        <label for="prezzo">Prezzo:</label><br>
+        <input type="number" name="prezzo" step="0.01" value="<?php echo $prodotto["prezzo"]; ?>" required><br>
+
+        <label for="stato">Stato:</label><br>
+        <input type="text" name="stato" value="<?php echo $prodotto["stato"]; ?>" required><br>
+
+        <button type="submit" name="modifica">Salva Modifica</button>
+    </form>
+<?php endif; ?>
 
 <a href="prodotti.php">🔙 Torna alla lista prodotti</a>
 
