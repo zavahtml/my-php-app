@@ -1,30 +1,43 @@
 <?php
 include 'connessione.php'; // Connessione al database Railway
 
+// Ottenere gli ordini esistenti
+$ordini = $conn->query("SELECT id FROM ordini ORDER BY id DESC");
+
+// Messaggio di conferma/errore
+$messaggio = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $prezzo = $_POST['prezzo'];
     $stato = $_POST['stato'];
-    $quantita = $_POST['quantita']; // Numero di oggetti da aggiungere
+    $quantita = $_POST['quantita'];
+    $ordine_id = $_POST['ordine_id'];
 
-    // Sicurezza: Prevenzione SQL Injection
-    $nome = $conn->real_escape_string($nome);
-    $prezzo = $conn->real_escape_string($prezzo);
-    $stato = $conn->real_escape_string($stato);
-    $quantita = intval($quantita); // Convertiamo la quantità in numero intero
+    if (!empty($nome) && is_numeric($prezzo) && is_numeric($quantita) && $quantita > 0) {
+        $nome = $conn->real_escape_string($nome);
+        $prezzo = $conn->real_escape_string($prezzo);
+        $stato = $conn->real_escape_string($stato);
+        $quantita = intval($quantita);
+        $ordine_id = intval($ordine_id);
 
-    if ($quantita > 0) {
-        for ($i = 0; $i < $quantita; $i++) {
-            $sql = "INSERT INTO prodotti (nome, prezzo, stato) VALUES ('$nome', '$prezzo', '$stato')";
-            $conn->query($sql);
+        // Se è stato selezionato "Nuovo ordine", creiamo un ordine
+        if ($ordine_id == 0) {
+            $conn->query("INSERT INTO ordini (stato, totale) VALUES ('In lavorazione', 0)");
+            $ordine_id = $conn->insert_id;
         }
-        echo "<p style='color:green;'>Aggiunti $quantita prodotti con nome '$nome'!</p>";
+
+        // Inserire i prodotti nel database
+        for ($i = 0; $i < $quantita; $i++) {
+            $conn->query("INSERT INTO prodotti (nome, prezzo, stato, ordine_id) 
+                          VALUES ('$nome', '$prezzo', '$stato', '$ordine_id')");
+        }
+
+        $messaggio = "<p style='color:green;'>Aggiunti $quantita prodotti con nome '$nome' all'ordine #$ordine_id!</p>";
     } else {
-        echo "<p style='color:red;'>Errore: La quantità deve essere almeno 1!</p>";
+        $messaggio = "<p style='color:red;'>Errore: Assicurati di compilare tutti i campi correttamente.</p>";
     }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -32,22 +45,29 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inserisci Prodotto</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            color: #007BFF;
-            text-decoration: none;
-        }
-    </style>
+    <title>Aggiungi Prodotti</title>
 </head>
 <body>
-<a href="index.html">🔙 Torna alla lista prodotti</a>
+
+<h2>Aggiungi un Nuovo Prodotto</h2>
+<?php echo $messaggio; ?>
+
+<form action="inserisci.php" method="POST">
+    Nome: <input type="text" name="nome" required><br>
+    Prezzo: <input type="number" name="prezzo" step="0.01" required><br>
+    Stato: <input type="text" name="stato" required><br>
+    Quantità: <input type="number" name="quantita" min="1" required><br>
+
+    <label for="ordine_id">Seleziona Ordine:</label>
+    <select name="ordine_id" required>
+        <option value="0">🆕 Nuovo Ordine</option>
+        <?php while ($ordine = $ordini->fetch_assoc()): ?>
+            <option value="<?php echo $ordine['id']; ?>">Ordine #<?php echo $ordine['id']; ?></option>
+        <?php endwhile; ?>
+    </select><br>
+
+    <button type="submit">Aggiungi Prodotto</button>
+</form>
+
 </body>
 </html>
