@@ -41,6 +41,12 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
+<br>
+<a href="rimuovi.php">
+    <button style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+        Rimuovi un Prodotto
+    </button>
+</a>
 
 <h2>Lista Prodotti</h2>
 
