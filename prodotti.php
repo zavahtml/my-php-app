@@ -41,6 +41,7 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
+<a href="index.html">🔙 Torna alla lista prodotti</a>
 <br>
 <a href="rimuovi.php">
     <button style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
