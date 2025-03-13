@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Prodotti</title>
+    <title>Gestione Prodotti e Ordini</title>
 </head>
 <body>
-    <h2>Inserisci un Nuovo Prodotto</h2>
-    <form action="inserisci.php" method="POST">
-        Nome: <input type="text" name="nome" required><br>
-        Prezzo: <input type="number" name="prezzo" step="0.01" required><br>
-        Stato: <input type="text" name="stato" required><br>
-        Quantità: <input type="number" name="quantita" min="1" required><br>
-        <button type="submit">Aggiungi Prodotto</button>
-        <br>
-    <a href="prodotti.php">
-    <button type="button">Visualizza Prodotti</button>
-    </a>
 
-    </form>
+<h2>Aggiungi un Nuovo Prodotto</h2>
+
+<form action="inserisci.php" method="POST">
+    Nome: <input type="text" name="nome" required><br>
+    Prezzo: <input type="number" name="prezzo" step="0.01" required><br>
+    Stato: <input type="text" name="stato" required><br>
+    Quantità: <input type="number" name="quantita" min="1" required><br>
+
+    <!-- Dropdown per scegliere l'ordine -->
+    <label for="ordine_id">Seleziona Ordine:</label>
+    <select name="ordine_id" required id="ordineDropdown">
+        <option value="0">🆕 Nuovo Ordine</option>
+    </select><br>
+
+    <button type="submit">Aggiungi Prodotto</button>
+</form>
+
+<br>
+<a href="prodotti.php">
+    <button>Visualizza Prodotti per Ordine</button>
+</a>
+
+<a href="modifica.php">
+    <button>Modifica un Prodotto</button>
+</a>
+
+<a href="rimuovi.php">
+    <button>Rimuovi un Prodotto</button>
+</a>
+
+<a href="rimuovi_range.php">
+    <button>Rimuovi più Prodotti</button>
+</a>
+
+<script>
+    // Caricare gli ordini dal database via AJAX (opzionale, se hai un file PHP che restituisce gli ordini in JSON)
+    fetch('ordini_lista.php')
+        .then(response => response.json())
+        .then(data => {
+            const ordineDropdown = document.getElementById('ordineDropdown');
+            data.forEach(ordine => {
+                let option = document.createElement("option");
+                option.value = ordine.id;
+                option.textContent = `Ordine #${ordine.id}`;
+                ordineDropdown.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Errore nel caricamento degli ordini:', error));
+</script>
+
 </body>
 </html>
