@@ -3,9 +3,21 @@ include 'connessione.php'; // Connessione al database Railway
 
 // Ottenere tutti gli ordini
 $ordini = $conn->query("SELECT * FROM ordini ORDER BY id DESC");
+?>
 
-echo "<h2>Lista Prodotti per Ordine</h2>";
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Prodotti per Ordine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<h2>Lista Prodotti per Ordine</h2>
+
+<?php
 if ($ordini->num_rows > 0) {
     while ($ordine = $ordini->fetch_assoc()) {
         echo "<h3>Ordine #" . $ordine['id'] . " - Stato: " . $ordine['stato'] . "</h3>";
@@ -41,3 +53,10 @@ if ($ordini->num_rows > 0) {
 
 $conn->close();
 ?>
+
+<div class="link-container">
+    <a href="index.html">🏠 Torna alla Home</a>
+</div>
+
+</body>
+</html>
