@@ -27,13 +27,13 @@ input, select, button {
 }
 
 button {
-    background-color: #007BFF;
+    background-color: #6200ff;
     color: white;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #6200ff;
 }
 
 .link-container {
@@ -42,7 +42,7 @@ button:hover {
 
 a {
     display: inline-block;
-    background: #007BFF;
+    background: #6200ff;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
@@ -51,7 +51,7 @@ a {
 }
 
 a:hover {
-    background: #0056b3;
+    background: #6200ff;
 }
 /* Stile della tabella */
 table {
@@ -71,7 +71,7 @@ th, td {
 }
 
 th {
-    background-color: #007BFF;
+    background-color:#6200ff;
     color: white;
     font-weight: bold;
 }
