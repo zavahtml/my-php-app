@@ -4,7 +4,6 @@ include 'connessione.php'; // Connessione al database Railway
 // Recupera la lista degli ordini
 $result = $conn->query("SELECT id FROM ordini ORDER BY id DESC");
 
-// Converti il risultato in un array JSON
 $ordini = [];
 while ($row = $result->fetch_assoc()) {
     $ordini[] = $row;
