@@ -46,11 +46,12 @@
 </a>
 
 <script>
-    // Caricare gli ordini dal database via AJAX (opzionale, se hai un file PHP che restituisce gli ordini in JSON)
+    // Caricare gli ordini dal database e riempire il dropdown
     fetch('ordini_lista.php')
         .then(response => response.json())
         .then(data => {
             const ordineDropdown = document.getElementById('ordineDropdown');
+            
             data.forEach(ordine => {
                 let option = document.createElement("option");
                 option.value = ordine.id;
@@ -60,6 +61,7 @@
         })
         .catch(error => console.error('Errore nel caricamento degli ordini:', error));
 </script>
+
 
 </body>
 </html>
