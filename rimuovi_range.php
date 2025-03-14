@@ -18,10 +18,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $check_result = $conn->query($check_sql);
 
             if ($check_result->num_rows > 0) {
-                // Eliminiamo tutti i prodotti nell'intervallo di ID specificato
+                // 1️⃣ Disattiviamo temporaneamente i vincoli di chiave esterna
+                $conn->query("SET FOREIGN_KEY_CHECKS = 0");
+
+                // 2️⃣ Eliminiamo tutti i prodotti nell'intervallo di ID specificato
                 $sql = "DELETE FROM prodotti WHERE id BETWEEN $id_inizio AND $id_fine";
                 if ($conn->query($sql) === TRUE) {
-                    $messaggio = "<p style='color:green;'>Prodotti eliminati con successo (ID da $id_inizio a $id_fine)!</p>";
+
+                    // 3️⃣ Riordiniamo gli ID dei prodotti
+                    $conn->query("SET @count = 0;");
+                    $conn->query("UPDATE prodotti SET id = @count:= @count + 1;");
+                    $conn->query("ALTER TABLE prodotti AUTO_INCREMENT = 1;");
+
+                    // 4️⃣ Riattiviamo i vincoli di chiave esterna
+                    $conn->query("SET FOREIGN_KEY_CHECKS = 1");
+
+                    $messaggio = "<p style='color:green;'>Prodotti eliminati con successo (ID da $id_inizio a $id_fine)! ID riordinati.</p>";
                 } else {
                     $messaggio = "<p style='color:red;'>Errore durante l'eliminazione: " . $conn->error . "</p>";
                 }
