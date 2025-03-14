@@ -20,13 +20,13 @@ $ordini = $conn->query("SELECT * FROM ordini ORDER BY id DESC");
 <?php
 if ($ordini->num_rows > 0) {
     while ($ordine = $ordini->fetch_assoc()) {
-        echo "<h3>Ordine #" . $ordine['id'] . " - Stato: " . $ordine['stato'] . "</h3>";
+        echo "<h3>🛒 Ordine #" . $ordine['id'] . " - Stato: " . $ordine['stato'] . "</h3>";
 
         // Recuperiamo i prodotti dell'ordine
         $prodotti = $conn->query("SELECT * FROM prodotti WHERE ordine_id = " . $ordine['id']);
 
         if ($prodotti->num_rows > 0) {
-            echo "<table border='1'>
+            echo "<table>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
