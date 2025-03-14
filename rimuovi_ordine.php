@@ -23,13 +23,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // 2️⃣ Eliminiamo l'ordine (i prodotti associati verranno eliminati grazie a ON DELETE CASCADE)
             $sql = "DELETE FROM ordini WHERE id = $ordine_id";
             if ($conn->query($sql) === TRUE) {
-                
-                // 3️⃣ Riordiniamo gli ID dopo l'eliminazione
+
+                // 3️⃣ Riordiniamo gli ID degli ordini
                 $conn->query("SET @count = 0;");
                 $conn->query("UPDATE ordini SET id = @count:= @count + 1;");
-                
-                // 4️⃣ Resettiamo `AUTO_INCREMENT`
                 $conn->query("ALTER TABLE ordini AUTO_INCREMENT = 1;");
+
+                // 4️⃣ Riordiniamo anche gli ID dei prodotti
+                $conn->query("SET @count = 0;");
+                $conn->query("UPDATE prodotti SET id = @count:= @count + 1;");
+                $conn->query("ALTER TABLE prodotti AUTO_INCREMENT = 1;");
 
                 // 5️⃣ Riattiviamo i vincoli di chiave esterna
                 $conn->query("SET FOREIGN_KEY_CHECKS = 1");
