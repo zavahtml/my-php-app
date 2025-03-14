@@ -17,15 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $check_result = $conn->query($check_sql);
 
         if ($check_result->num_rows > 0) {
-            // Eliminiamo l'ordine (MySQL cancellerà automaticamente i prodotti associati)
+            // 1️⃣ Disattiviamo temporaneamente i vincoli di chiave esterna
+            $conn->query("SET FOREIGN_KEY_CHECKS = 0");
+
+            // 2️⃣ Eliminiamo l'ordine (i prodotti associati verranno eliminati grazie a ON DELETE CASCADE)
             $sql = "DELETE FROM ordini WHERE id = $ordine_id";
             if ($conn->query($sql) === TRUE) {
-                // 1️⃣ Riordiniamo gli ID dopo l'eliminazione
+                
+                // 3️⃣ Riordiniamo gli ID dopo l'eliminazione
                 $conn->query("SET @count = 0;");
                 $conn->query("UPDATE ordini SET id = @count:= @count + 1;");
                 
-                // 2️⃣ Resettiamo `AUTO_INCREMENT`
+                // 4️⃣ Resettiamo `AUTO_INCREMENT`
                 $conn->query("ALTER TABLE ordini AUTO_INCREMENT = 1;");
+
+                // 5️⃣ Riattiviamo i vincoli di chiave esterna
+                $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
                 $messaggio = "<p style='color:green;'>Ordine #$ordine_id eliminato con tutti i suoi prodotti! ID riordinati.</p>";
             } else {
