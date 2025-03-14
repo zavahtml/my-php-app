@@ -20,7 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Eliminiamo l'ordine (MySQL cancellerà automaticamente i prodotti associati)
             $sql = "DELETE FROM ordini WHERE id = $ordine_id";
             if ($conn->query($sql) === TRUE) {
-                $messaggio = "<p style='color:green;'>Ordine #$ordine_id eliminato con tutti i suoi prodotti!</p>";
+                // 1️⃣ Riordiniamo gli ID dopo l'eliminazione
+                $conn->query("SET @count = 0;");
+                $conn->query("UPDATE ordini SET id = @count:= @count + 1;");
+                
+                // 2️⃣ Resettiamo `AUTO_INCREMENT`
+                $conn->query("ALTER TABLE ordini AUTO_INCREMENT = 1;");
+
+                $messaggio = "<p style='color:green;'>Ordine #$ordine_id eliminato con tutti i suoi prodotti! ID riordinati.</p>";
             } else {
                 $messaggio = "<p style='color:red;'>Errore durante l'eliminazione: " . $conn->error . "</p>";
             }
