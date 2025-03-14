@@ -3,7 +3,7 @@ include 'connessione.php'; // Connessione al database Railway
 
 $messaggio = "";
 
-// Recupera la lista degli ordini per il menu a tendina
+// Recupera la lista degli ordini
 $ordini = $conn->query("SELECT id FROM ordini ORDER BY id ASC");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,12 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Eliminiamo l'ordine (MySQL cancellerà automaticamente i prodotti associati)
             $sql = "DELETE FROM ordini WHERE id = $ordine_id";
             if ($conn->query($sql) === TRUE) {
-                // Riordiniamo gli ID dopo l'eliminazione
-                $conn->query("SET @count = 0;");
-                $conn->query("UPDATE ordini SET id = @count:= @count + 1;");
-                $conn->query("ALTER TABLE ordini AUTO_INCREMENT = 1;");
-
-                $messaggio = "<p style='color:green;'>Ordine #$ordine_id eliminato con tutti i suoi prodotti! ID riordinati.</p>";
+                $messaggio = "<p style='color:green;'>Ordine #$ordine_id eliminato con tutti i suoi prodotti!</p>";
             } else {
                 $messaggio = "<p style='color:red;'>Errore durante l'eliminazione: " . $conn->error . "</p>";
             }
@@ -44,34 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rimuovi Ordine</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        form {
-            display: inline-block;
-            background: #f8f8f8;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        select, button {
-            padding: 8px;
-            margin: 10px 0;
-        }
-        button {
-            background-color: red;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkred;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -81,16 +49,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <form method="POST">
     <label for="ordine_id">Seleziona un Ordine:</label>
     <select name="ordine_id" required>
-        <option value="">Seleziona un Ordine</option>
         <?php while ($ordine = $ordini->fetch_assoc()): ?>
             <option value="<?php echo $ordine['id']; ?>">Ordine #<?php echo $ordine['id']; ?></option>
         <?php endwhile; ?>
     </select><br>
-
     <button type="submit">Elimina Ordine</button>
 </form>
 
-<a href="prodotti.php">🔙 Torna alla lista prodotti</a>
+<div class="link-container">
+    <a href="index.html">🏠 Torna alla Home</a>
+</div>
 
 </body>
 </html>
